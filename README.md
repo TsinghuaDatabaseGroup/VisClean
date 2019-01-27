@@ -29,6 +29,7 @@ cd VisClean
 ```
 Run Web Server
 ```
+# Note that, the root directory should be /VisClean/ 
 cd  VisClean
 node web/bin/www
 ```
