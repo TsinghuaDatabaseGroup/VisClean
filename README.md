@@ -1,5 +1,5 @@
 ![VisClean-Icon](icon.png)
-# VisClean V0.1  
+# VisClean v0.1  
 VisClean is a web-based system that progressively turns wrong visualizations into correct ones by interactive data cleaning. 
 It supports: (1) Wrong Visualization Detection: Given a dataset and a visualization, VisClean can automatically identify wrong visualizations caused by dirty data. 
 (2) Active Interaction: VisClean provides a novel sliding-window-based method for users to directly manipulate the visualization (e.g., merging two bars) for cleaning the data. 
@@ -35,7 +35,7 @@ node web/bin/www
 The VisClean could be visited at [http://localhost:8080](http://localhost:8080)
 
 
-## What's new feature will in VisClean V0.2?
+## What's new feature will in VisClean v0.2?
 - More friendly interaction and UI
 - Release a development version for easily using in Ipython
 
