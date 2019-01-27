@@ -24,14 +24,14 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installing
 Clone from Github
 ```
-https://github.com/TsinghuaDatabaseGroup/VisClean.git
-cd VisClean
+> https://github.com/TsinghuaDatabaseGroup/VisClean.git
+> cd VisClean
 ```
 Run Web Server
 ```
 # Note that, the root directory should be /VisClean/ 
-cd  VisClean
-node web/bin/www
+> cd  VisClean
+> node web/bin/www
 ```
 The VisClean could be visited at [http://localhost:8080](http://localhost:8080)
 
