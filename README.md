@@ -17,8 +17,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 - [x] Python 3.6
-- [x] Node.js v8.2.1(https://github.com/nodejs/node) for web service
-- [x] py_entitymatching(https://github.com/anhaidgroup/py_entitymatching/tree/rel_0.3.x) for EM
+- [x] [Node.js v8.2.1](https://github.com/nodejs/node) for web service
+- [x] [py_entitymatching](https://github.com/anhaidgroup/py_entitymatching/tree/rel_0.3.x) for EM
 
 
 ### Installing
