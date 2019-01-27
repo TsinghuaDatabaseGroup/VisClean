@@ -1,4 +1,11 @@
-![VisClean-Icon](icon.png)
+<p align="center">
+  <a href="https://github.com/TsinghuaDatabaseGroup/VisClean/">
+    <img
+      alt="VisClean"
+      src="https://github.com/TsinghuaDatabaseGroup/VisClean/blob/master/icon.png"
+    />
+  </a>
+</p>
 # VisClean v0.1  
 VisClean is a web-based system that progressively turns wrong visualizations into correct ones by interactive data cleaning. 
 It supports: (1) Wrong Visualization Detection: Given a dataset and a visualization, VisClean can automatically identify wrong visualizations caused by dirty data. 
@@ -10,7 +17,15 @@ It supports: (1) Wrong Visualization Detection: Given a dataset and a visualizat
 ![front-end-min](front-end-min.png)
 
 ## Architecture
-![architecture](architecture-min.png)
+<p align="center">
+  <a href="https://github.com/TsinghuaDatabaseGroup/VisClean/">
+    <img
+      alt="Architecture"
+      src="https://github.com/TsinghuaDatabaseGroup/VisClean/blob/master/architecture-min.png"
+      width="65%"
+    />
+  </a>
+</p>
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
