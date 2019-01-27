@@ -1,0 +1,69 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=Edge,chrome=1')
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    // 最新版本的 Bootstrap 核心 CSS 文件
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u', crossorigin='anonymous')
+    //<!-- IE10 viewport hack for Surface/desktop Windows 8 bug
+    link(rel='stylesheet', href='/stylesheets/ie10-viewport-bug-workaround.css')
+    // My style
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    //<!-- Just for debugging purposes. Don't actually copy these 2 lines!
+    //<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]
+    script(src='./stylesheets/ie-emulation-modes-warning.js')
+
+    link(rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css")
+    //css for file upload plugins
+    link(href='/fileinput/css/fileinput.min.css', media='all', rel='stylesheet', type='text/css')
+    //css for pace
+    link(rel="stylesheet" href='/pace/pace.css')
+
+    script(src='./Echarts/echarts.js' charset="utf-8")
+
+
+
+  body
+    - var columnName = ['id','Title', 'Authors', 'Venue','Year','Citations']
+    mixin columnItem(columnName)
+      li.list-group-item
+        a.filterColumns(href="#")
+          span.glyphicon.glyphicon-filter.text-dark(aria-hidden='true')
+          | #{columnName}
+
+    block content
+
+
+
+    // jQuery (necessary for Bootstrap's JavaScript plugins)
+    script(src='https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js')
+    // 最新的 Bootstrap 核心 JavaScript 文件
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymous')
+    //IE10 viewport hack for Surface/desktop Windows 8 bug
+    script(src='./stylesheets/ie10-viewport-bug-workaround.js')
+
+
+
+
+    // Latest compiled and minified JavaScript
+    script(src = '//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js')
+
+    //script for file upload
+    //script(src = '/fileinput/js/purify.min.js')
+    script(src = '/fileinput/js/fileinput.min.js')
+
+
+    script(src = '/javascripts/LeftPanel.js')
+    script(src = '/javascripts/Question.js')
+
+    script(type='text/javascript').
+        // 显示按钮元素
+        //$("#ques_alert").show();
+        //$("#ques_slide_window").show();
+        //$("#ques_training").show();
+        //$("#ques_consolidation").show();
+
+        //ajax ---> get data from back-end
+        request_visualization(true)
