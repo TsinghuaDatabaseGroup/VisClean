@@ -6,6 +6,8 @@
     />
   </a>
 </p>
+
+
 # VisClean v0.1  
 VisClean is a web-based system that progressively turns wrong visualizations into correct ones by interactive data cleaning. 
 It supports: (1) Wrong Visualization Detection: Given a dataset and a visualization, VisClean can automatically identify wrong visualizations caused by dirty data. 
