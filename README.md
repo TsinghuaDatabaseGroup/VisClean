@@ -34,16 +34,6 @@ node web/bin/www
 ```
 The VisClean could be visited at [http://localhost:8080](http://localhost:8080)
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
 
 ## What's new feature will in VisClean V0.2?
 - More friendly interaction and UI
