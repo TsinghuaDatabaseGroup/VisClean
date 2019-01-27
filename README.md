@@ -32,7 +32,7 @@ Run Web Server
 cd  VisClean
 node web/bin/www
 ```
-The VisClean could be visited at [http://localhost:3000](http://localhost:3000)
+The VisClean could be visited at [http://localhost:8080](http://localhost:8080)
 
 ```
 until finished
