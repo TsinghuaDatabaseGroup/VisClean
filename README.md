@@ -27,15 +27,12 @@ Clone from Github
 https://github.com/TsinghuaDatabaseGroup/VisClean.git
 cd VisClean
 ```
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
+Run Web Server
 ```
-Give the example
+cd  VisClean
+node web/bin/www
 ```
-
-And repeat
+The VisClean could be visited at [http://localhost:3000](http://localhost:3000)
 
 ```
 until finished
