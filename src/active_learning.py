@@ -1,7 +1,7 @@
 from py_entitymatching.matcher.rfmatcher import *
 from py_entitymatching.matcher.mlmatcher import *
 
-
+# for training question
 class ActiveLearning(RFMatcher):
     def __init__(self, *args, **kwargs):
         super(ActiveLearning, self).__init__()

@@ -93,7 +93,6 @@ def slide_window(table_path):
             data["x_data"][i] += [cand_xData[each_value]]
             data["y_data"][i] += [cand_yData[each_value]]
 
-    # 返回前十个"柱子"
     # print(len(data["x_data"]))
     print(json.dumps(data))
 

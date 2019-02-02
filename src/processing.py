@@ -69,7 +69,6 @@ def myPair2Cluster():
     print(apply_table.head(n=200))
     print(quesId)
 
-    # 虽然效率低，但是搞出来就行了
     with open('training_question_from_predict.csv', 'a+') as file:
         csv.writer(file, lineterminator = '\n').writerows(quesId)
 
