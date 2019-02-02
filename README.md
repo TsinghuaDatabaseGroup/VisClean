@@ -54,8 +54,9 @@ The VisClean could be visited at [http://localhost:8080](http://localhost:8080)
 
 
 ## What's new feature will in VisClean v0.2?
-- More friendly interaction and UI
-- Release a development version for easily using in Ipython
+- A smarter inference algorithm from the answer of the user
+- More friendly interaction and UI (Using Vue.js for font-end)
+- Restruct the source code and release a development version for easily using in Ipython and PyPi package.
 
 ## Contributors
 |#|Contributor|Affiliation|Contact|
