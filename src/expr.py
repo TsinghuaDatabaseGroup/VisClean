@@ -1,4 +1,4 @@
-from src.entity_matching import EntityMatching
+from entity_matching import EntityMatching
 
 
 

@@ -1,6 +1,9 @@
 import pandas as pd
 import json
+import numpy as np
 import sys
+import os
+
 def visQuery(TablePath, GroupByCol, AggCol, AggFuc):
     '''
     :param TablePath: the path of Dataset D for visualization & cleaning
@@ -20,12 +23,20 @@ def visQuery(TablePath, GroupByCol, AggCol, AggFuc):
     #                                                                                     ascending=False).values.T.tolist()[
     #     1]
     #print(len(data["x_data"]))
+
+    '''
+    Write data["y_data"] to the txt file as the visualization, which for compute the dist later.
+    '''
+    save_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'../dataset/DBConf/expr_tmp/vis'))
+    np.savetxt(save_path + "/current_vis.txt", np.sort(data["y_data"], axis=None))
+
     print(json.dumps(data))
 
 
 if __name__ == '__main__':
-    # path = '/Users/yuyu/Project/VisClean/dataset/DBConf'
-    # table_path = path + '/gold_from_predict.csv'
+    # path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf' + '/expr_tmp'
+    # table_path = path + '/DBPublications-input_id.csv' # origin table -- dirty table
+    # visQuery(table_path, 'Venue', 'Citations', 'sum')
 
     visQuery(sys.argv[1], 'Venue', 'Citations','sum')
     # res.to_csv("queryRes.csv")

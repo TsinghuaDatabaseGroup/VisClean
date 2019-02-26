@@ -1,9 +1,3 @@
-# class QueSelector(object):
-#     def __init__(self):
-#         pass
-#
-#     def selector(self):
-#         pass
 import pandas as pd
 import sys
 import json
@@ -121,10 +115,12 @@ def consolidation(table_path, answer):
 
     print(json.dumps({"successfuly": 1}))
 
+# get the training pair question candidate set.
 def ques_training(table_path):
     df = pd.read_csv(table_path)
     print(df.loc[0].to_json())
 
+# resort the bar of each bar chart.
 def resort(table_path):
     df = pd.read_csv(table_path)
     data = {"x_data": [], "y_data": []}

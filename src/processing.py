@@ -69,7 +69,7 @@ def myPair2Cluster():
     print(apply_table.head(n=200))
     print(quesId)
 
-    with open('training_question_from_predict.csv', 'a+') as file:
+    with open('trainming_question_from_predict.csv', 'a+') as file:
         csv.writer(file, lineterminator = '\n').writerows(quesId)
 
     # apply_table.to_csv(path + '/cluster_from_predict.csv', index=False)
