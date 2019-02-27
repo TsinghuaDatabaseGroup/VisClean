@@ -56,7 +56,8 @@ if __name__ == '__main__':
     # normalize the data
     nor_current_vis = current_vis / np.sum(current_vis)
     nor_cleaned_vis = cleaned_vis / np.sum(cleaned_vis)
-
+    print(len(nor_cleaned_vis))
+    print(len(nor_current_vis))
     '''sort the array and fix the empty value.'''
     if len(nor_cleaned_vis) > len(nor_current_vis):
         nor_current_vis = np.append(np.zeros(len(nor_cleaned_vis) - len(nor_current_vis)), nor_current_vis)

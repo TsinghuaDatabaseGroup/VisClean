@@ -140,10 +140,11 @@ def consolidation(table_path, answer):
     for each in answer:
         group_answer.append(each.split('+'))
 
+    # read the processing cleaning dataset -- gold_from_predict.csv here.
     df = pd.read_csv(table_path)
     df['Venue'] = df['Venue'].map(value_cleaning)
 
-    # output csv
+    # update and output the new csv
     df.to_csv(table_path, index=False)
     print(json.dumps({"successfuly": 1}))
 
