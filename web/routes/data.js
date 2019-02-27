@@ -162,17 +162,28 @@ async function ans_slide_window(tableID, answer) {
         argv.push(process.cwd() + '/dataset/DBConf/'+ 'expr_tmp/' + 'gold_from_predict' + '.csv');
 
         let answer_argv = "";
+        // [begin] code block for dealing with several groups in the window
+        // for (let i = 0; i < answer.length; i++){
+        //     for (let j = 0; j < answer[i].length; j++){
+        //         answer_argv += answer[i][j];
+        //         if (j != answer[i].length-1){
+        //             answer_argv +='+'
+        //         }
+        //     }
+        //     if (i != answer.length -1){
+        //         answer_argv += ','
+        //     }
+        // }
+        // [end] code block for dealing with several groups in the window
+
+        // [begin] code block for dealing with one group in the window
         for (let i = 0; i < answer.length; i++){
-            for (let j = 0; j < answer[i].length; j++){
-                answer_argv += answer[i][j];
-                if (j != answer[i].length-1){
-                    answer_argv +='+'
-                }
-            }
-            if (i != answer.length -1){
-                answer_argv += ','
-            }
+           answer_argv += answer[i];
+           if (i != answer.length-1)
+               answer_argv += "+";
         }
+        // [end] code block for dealing with one group in the window
+
         console.log(answer_argv);
         argv.push(answer_argv);
         console.log("ans_slide_window, sent to back-end: ", argv);

@@ -20,9 +20,9 @@ block content
                 .modal-header
                     button.close(type='button', data-dismiss='modal', aria-label='Close')
                         span(aria-hidden='true') ×
-                    h3.modal-title Your Select Dataset
+                    h3.modal-title Label the training pair question.
                 .modal-body
-                    h3(style="margin-left:auto;margin-right:auto;") Label Yes or No
+                    h3(style="margin-left:auto;margin-right:auto;") Click Yes or No
                     table#table_labelTrainingPair(data-toggle='table')
                         table.table
                             thead
@@ -155,8 +155,10 @@ block content
                                 td
                                     select.from.form-control
                                         option -- --
-                    code
-                        | Visualize Bar, SELECT Venue, SUM(Citations) From DBPublications-input_id GROUP BY(Venue).
+                    p
+                        b  Visualization Language:
+                        code
+                            |   Visualize Bar, SELECT Venue, SUM(Citations) From DBPublications-input_id GROUP BY(Venue).
             .panel.panel-default
                 .panel-heading
                     strong
@@ -177,23 +179,7 @@ block content
                         button.btn.btn-warning#ques_training(style="display:none") Answer Training Question
                         button.btn.btn-primary#ques_consolidation(style="display:none") Consolidation Question
 
-                    //.col-md-6
-                    //    table.table.table-bordered
-                    //        // Table head
-                    //        thead
-                    //            tr
-                    //                th.info Questions
-                    //                th.success Yes
-                    //                th.danger No
-                    //        tbody
-                    //            tr
-                    //                td
-                    //                    | Do you approve to merge those bars with the same color?
-                    //
-                    //                td
-                    //                    button.btn-success.form-control √
-                    //                td
-                    //                    button.btn-danger.form-control X
+
                     //.col-md-6
                     //    table.table.table-bordered
                     //        // Table head
@@ -302,23 +288,44 @@ block content
                     //                        button.btn-success.form-control √
                     //
 
-            //.col-md-7
 
-            .panel.panel-default
-                .panel-heading
-                    strong
-                        | Visualization Result
-                .panel-body
-                    #main(style='width: 650px;height:450px;float:left')
-                    #chart4window(style='width: 400px;height:400px;float:left; margin-left:20px')
+            .row
+                .col-md-7
+                    .panel.panel-default
+                        .panel-heading
+                            strong
+                                | Visualization Result
+                        .panel-body
+                            #main(style='width: 650px;height:450px')
+                            //#chart4window(style='width: 400px;height:400px;float:left; margin-left:20px')
 
-            //.col-md-7
-                .panel.panel-default
-                    .panel-heading
-                        strong
-                            | Interaction Panel
-                    .panel-body
-                        #main1(style='width: 650px;height:700px;float:left')
+                .col-md-5
+                    .panel.panel-default
+                        .panel-heading
+                            strong
+                                | Interaction Panel
+                        .panel-body
+                            #chart4window(style='width: 400px;height:450px')
+
+                            br
+                            br
+
+                            table.table.table-bordered#window_table(style='display:none')
+                                // Table head
+                                thead
+                                    tr
+                                        th.info Questions
+                                        th.success Yes
+                                        th.danger No
+                                tbody
+                                    tr
+                                        td
+                                            | Do you approve to merge those bars with the same color?
+
+                                        td
+                                            button.btn-success.form-control#btn_approve_window √
+                                        td
+                                            button.btn-danger.form-control#btn_reject_window X
 
 
             //#chartsContainer.facetedSearchContainer

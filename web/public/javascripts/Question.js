@@ -185,6 +185,7 @@ function resort_by_alph() {
                 }]
             };
 
+
             myChart.on('brushSelected', renderBrushed);
 
             function renderBrushed(params) {
@@ -232,7 +233,7 @@ function resort_by_alph() {
 }
 
 
-// Call this function on $("#ques_slide_window")
+// Call this function on $("#ques_slide_window").click ... ...
 function ans_slide_window(tableName, answer) {
     $.ajax({
         method: 'GET',    // 如果要使用GET方式，则将此处改为'get'
@@ -244,11 +245,11 @@ function ans_slide_window(tableName, answer) {
         dataType: 'json',
         success: function (data) {
             // success and do something here
-            console.log("Successfully apply the answer on the backend")
+            console.log("Successfully apply the answer on the backend");
             // Update the Visualization Result !!!
             $("#sent_wait_backend").hide();
 
-            console.log('apply the slide window. ==>', data)
+            console.log('apply the slide window. ==>', data);
 
             //TODO 更新一下左边的可视化结果
             request_visualization(false)
@@ -290,9 +291,14 @@ function slide_window(tableName) {
     })
 }
 
+
+
+// Call this function when clicking the button 'Slide Window' under the 'Status'
+// this function is for rendering the window-based question (bar chart)
 $("#ques_slide_window").click(function () {
     $("#ques_alert").hide();
     $("#ques_slide_window").hide();
+    $("#window_table").show();
 
     var worldMapContainer = document.getElementById('chart4window');
 
@@ -308,7 +314,8 @@ $("#ques_slide_window").click(function () {
     let legendData = ['SUM(Citations)'];
     let new_xdata = [];
     let new_ydata = [];
-    my_color = ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3']
+    my_color = ['#2E86C1','#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3']
+    // 这里的写法最初是给有多个group的window，现在默认每一个window只有一个group
     for (let i =0; i < slide_window_data["y_data"].length; i++){
         for (let j = 0; j < slide_window_data["y_data"][i].length; j++){
             new_ydata.push({
@@ -347,52 +354,52 @@ $("#ques_slide_window").click(function () {
         },
         toolbox: {
             feature: {
-                myMergeBar: {
-                    show: true,
-                    // name: 'merge_icon',
-                    title: '合并所选区域的柱子',
-                    icon: 'image://./images/merge.png',
-                    onclick: function () {
-                        let nxData = category_Data;
-                        let nyData = value_Data;
-
-                        // 记录用户merge的group
-                        let selectedBars_name = [];
-                        for (let i = 0; i < selectedBars.length; i++){
-                            selectedBars_name.push(category_Data[selectedBars[i]])
-                        }
-                        user_approve_groups.push(selectedBars_name);
-
-                        for (let i = 0; i < selectedBars.length; i++) {
-                            nxData.splice(selectedBars[i] - i, 1);
-                            nyData.splice(selectedBars[i] - i, 1);
-                        }
-
-
-                        option.xAxis.data = nxData;
-                        option.series[0].data = nyData;
-                        myChart.setOption(option);
-                        //
-                        myChart.dispatchAction({
-                            type: 'restore',
-                            // start: 20,
-                            // end: 30
-                        });
-
-                        //这里合并了柱子之后，要把结果往后台发送
-                        if (nxData.length == 0){ //TODO 当用户把所有的bar都合并后，就置空
-                            console.log('zero?!!!');
-                            myChart.dispose();
-                            //TODO 清空后，把所有的选择的merge group传给后台
-                            $("#sent_wait_backend").show();
-                            ans_slide_window('', user_approve_groups)
-                        }
-
-                    }
-                },
+                // the user select some bars to merge.
+                // myMergeBar: {
+                //     show: true,
+                //     title: 'Merge those bars you select',
+                //     icon: 'image://./images/merge.png',
+                //     onclick: function () {
+                //         let nxData = category_Data;
+                //         let nyData = value_Data;
+                //
+                //         // 记录用户merge的group
+                //         let selectedBars_name = [];
+                //         for (let i = 0; i < selectedBars.length; i++){
+                //             selectedBars_name.push(category_Data[selectedBars[i]])
+                //         }
+                //         user_approve_groups.push(selectedBars_name);
+                //
+                //         for (let i = 0; i < selectedBars.length; i++) {
+                //             nxData.splice(selectedBars[i] - i, 1);
+                //             nyData.splice(selectedBars[i] - i, 1);
+                //         }
+                //
+                //         option.xAxis.data = nxData;
+                //         option.series[0].data = nyData;
+                //         myChart.setOption(option);
+                //         //
+                //         myChart.dispatchAction({
+                //             type: 'restore',
+                //             // start: 20,
+                //             // end: 30
+                //         });
+                //
+                //         //这里合并了柱子之后，要把结果往后台发送
+                //         if (nxData.length == 0){ //TODO 当用户把所有的bar都合并后，就置空
+                //             console.log('zero?!!!');
+                //             //TODO 清空后，把所有的选择的merge group传给后台
+                //             // drop the current window
+                //             myChart.dispose();
+                //             $("#sent_wait_backend").show();
+                //             ans_slide_window('', user_approve_groups)
+                //         }
+                //
+                //     }
+                // },
                 myReOrderBar: {
                     show: true,
-                    title: '对所选区域的柱子重排序',
+                    title: 'Resort by value',
                     icon: 'image://./images/resort.png',
                     onclick: function () {
                         alert('resort bars')
@@ -400,7 +407,7 @@ $("#ques_slide_window").click(function () {
                 },
                 mySortBarByAlpha: {
                     show: true,
-                    title: '按字典重排柱子',
+                    title: 'Resort by category',
                     icon: 'image://./images/sort-alpha-desc.png',
                     onclick: function () {
                         alert('按字典重排柱子')
@@ -432,9 +439,9 @@ $("#ques_slide_window").click(function () {
 
 
         ],
-        legend: {
-            data: legendData
-        },
+        // legend: {
+        //     data: legendData,
+        // },
         xAxis: {
             type: 'category',
             axisLabel: {
@@ -455,7 +462,6 @@ $("#ques_slide_window").click(function () {
                     else {
                         return value
                     }
-
                 }
             },
             data: category_Data
@@ -466,13 +472,58 @@ $("#ques_slide_window").click(function () {
         series: [{
             name: 'SUM(Citations)',
             type: 'bar',
-            data: value_Data
+            data: value_Data,
         }]
     };
 
-    // myChart.on('mouseover', {element: 'merge_icon'}, function () {
-    //     alert('12312424')
-    // })
+    // TODO manually refine. (the user delete a bar from the window)
+    // This code block is for refining the Sliding Window,
+    // the mouse move over the bar --> show button 'x'
+    // then, the user click the button 'x' to remove this bar from the window
+    let deleteBarIndex = undefined;
+    myChart.on('mouseover', function (params) {
+        // mouser move over and show button.
+        console.log(params);
+        option.series[0]['markPoint'] = {
+            symbol: 'circle',
+                symbolSize: 20,
+                data: [
+                {
+                    name: 'Delete',
+                    value: 'X',
+                    xAxis: params.dataIndex,
+                    yAxis: params.value
+                }
+            ]
+        };
+        myChart.setOption(option);
+        // set the deleteBarIndex
+        deleteBarIndex = params.dataIndex;
+    });
+    myChart.on('mouseout', function (params) {
+        // mouser move over and show button.
+        console.log("delete");
+        option.series[0]['markPoint'] = {};
+        myChart.setOption(option);
+        // set the deleteBarIndex
+        deleteBarIndex = undefined;
+    });
+    // the user click and then remove the bar.
+    myChart.on('click', function (params) {
+        // console.log(para.name);
+        // the user click the bar that he want to remove.
+        console.log('mouse click-->para.dataIndex = ', params.dataIndex);
+        if (deleteBarIndex != undefined){
+            option.xAxis.data.splice(deleteBarIndex ,1);
+            option.series[0].data.splice(deleteBarIndex ,1);
+            // console.log(option.xAxis.data);
+            // console.log(option.series[0].data);
+        }
+
+        // 删除markpoint, the button 'x'
+        option.series[0]['markPoint'] = {};
+        myChart.setOption(option);
+    });
 
     myChart.on('brushSelected', renderBrushed);
 
@@ -512,4 +563,27 @@ $("#ques_slide_window").click(function () {
         resizeWorldMapContainer();
         myChart.resize();
     };
+});
+
+$("#btn_approve_window").click(function () {
+    //TODO 清空后，把所有的选择的merge group传给后台
+    // drop the current window
+    console.log("drop the current window and sent the interaction result to the back-end.");
+    let myChart = echarts.getInstanceByDom(document.getElementById('chart4window'));
+
+    $("#sent_wait_backend").show();
+    $("#window_table").hide();
+
+    user_approve_groups = myChart.getOption().xAxis[0].data;
+    console.log("user_approve_groups = ", user_approve_groups);
+
+    // sent the interaction result to the backend.
+    ans_slide_window('', user_approve_groups)
+
+    // 销毁window-based chart对象实例
+    myChart.dispose();
+});
+
+$("#btn_reject_window").click(function () {
+   alert("The user reject the window.")
 });

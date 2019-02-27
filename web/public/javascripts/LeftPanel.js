@@ -4,6 +4,7 @@
 // TODO  set table name
 var tableName = 'DBPublications-input_id';
 var $table_showDataDetails = $('#table_showDataDetails'); //用于展示当前选中数据表的 每一行详细数据
+
 //2. 通过Bootstrap - table 接口来查询数据库并且返回
 //TODO 加载服务器数据库中已经存在的数据表/files
 $("#uploadBtn").click(function () {
@@ -53,7 +54,7 @@ $("#dataBtn").click(function () {
             }
             console.log(columns);
             $table_showDataDetails.bootstrapTable('destroy').bootstrapTable({
-                method: 'get',
+                method: 'GET',
                 url: '/data/req_TableDataServerSidePaging',
                 pagination: true,
                 sidePagination: 'server',//分页方式：client客户端分页，server服务端分页（*）
@@ -67,6 +68,10 @@ $("#dataBtn").click(function () {
                 showHeader: true,
                 columns: columns
             });
+
+            //显示table modal
+            $('#dataModal').modal({backdrop: 'static', keyboard: false}, 'show');
+
 
             //TODO 更新[selected table下的]tableName
             // tableName = tableID;

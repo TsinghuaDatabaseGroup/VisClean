@@ -15,7 +15,8 @@ def slide_window(table_path):
     应该从candidate bars中select top-10 most benefit bars and then return to the user
     '''
     '''
-    这里在用一个启发式规则，应为dirty data的long tail效应，我们most benefit bars往往是在top-50 candidate bars中产生的
+    【假设】
+    这里在用一个启发式规则，因为dirty data的long tail效应，我们most benefit bars往往是在top-50 candidate bars中产生的
     '''
     df = pd.read_csv(table_path)
     data = {"x_data": [], "y_data": []}
@@ -47,14 +48,21 @@ def slide_window(table_path):
 
     top_groups = sorted(candset_index.items(), key=lambda x: x[1], reverse=True)
 
+    '''
+    Currently, we let the group_size = 1;
+    It means that all bars in a window are possible the same entity. (e.g., sigmod conf, sigmod, sigmod'18)
+    '''
     # from top_group to get grouped bars
     grouped_bars = []  # [[group1], [group2], [group3]]
     grouped_bars += [list(top_groups[0][0][0])]
 
-    group_cnt = 2
+    # Let Window Size == 10
+    window_size = 10
+    bar_cnt = 2
+
+    # [begin] this code block is for selecting one group in a window
     for i in range(1, len(top_groups)):
-        # Let Window Size == 12
-        if group_cnt > 12:
+        if bar_cnt > window_size:
             break
         ifUpdate = False
         for j in range(0, len(grouped_bars)):
@@ -62,21 +70,44 @@ def slide_window(table_path):
                 # Update the group_cnt
                 if len(set(grouped_bars[j]) & set(top_groups[i][0][0])) > len(grouped_bars[j]) or len(
                                 set(grouped_bars[j]) & set(top_groups[i][0][0])) == 1:
-                    group_cnt += len(set(grouped_bars[j]) & set(top_groups[i][0][0]))
+                    bar_cnt += len(set(grouped_bars[j]) & set(top_groups[i][0][0]))
                 # append value into the same group
                 update_group = set(grouped_bars[j]) | set(top_groups[i][0][0])
                 grouped_bars[j] = list(update_group)
                 ifUpdate = True
-            if group_cnt > 12:
+            if bar_cnt > window_size:
                 break
         if ifUpdate == False:
-            # append new value
-            update_group_cnt = group_cnt + len(list(top_groups[i][0][0]))
-            if update_group_cnt <= 12 + 2:
-                grouped_bars += [list(top_groups[i][0][0])]
-                group_cnt = update_group_cnt
-            if group_cnt > 12:
-                break
+            # append new value (add a new group)
+            pass
+
+    # [end] this code block is for selecting one group in a window
+
+    # [begin] this code block is for selecting several groups in a window
+    # for i in range(1,len(top_groups)):
+    #     if bar_cnt > window_size:
+    #         break
+    #     ifUpdate = False
+    #     for j in range(0,len(grouped_bars)):
+    #         if len(set(grouped_bars[j]) & set(top_groups[i][0][0])) != 0:
+    #             # Update the group_cnt
+    #             if len(set(grouped_bars[j]) & set(top_groups[i][0][0])) > len(grouped_bars[j]) or len(set(grouped_bars[j]) & set(top_groups[i][0][0])) == 1:
+    #                  bar_cnt += len(set(grouped_bars[j]) & set(top_groups[i][0][0]))
+    #             # append value into the same group
+    #             update_group = set(grouped_bars[j]) | set(top_groups[i][0][0])
+    #             grouped_bars[j] = list(update_group)
+    #             ifUpdate = True
+    #         if bar_cnt > window_size:
+    #             break
+    #     if ifUpdate == False:
+    #         # append new value
+    #         update_bar_cnt = bar_cnt + len(list(top_groups[i][0][0]))
+    #         if update_bar_cnt <= window_size + 2:
+    #             grouped_bars += [list(top_groups[i][0][0])]
+    #             group_cnt = update_bar_cnt
+    #         if group_cnt > window_size:
+    #             break
+    # [end] this code block is for selecting several groups in a window
 
     data["x_data"] = []
     data["y_data"] = []
@@ -92,6 +123,8 @@ def slide_window(table_path):
 
 
 # 在这个version，ans_slide_window主要是做data consolidation的工作。
+# Apply the answer from users
+# 根据用户在window里面的interaction来进行数据集的更新  // 直接更新gold_from_predict.csv
 def consolidation(table_path, answer):
     def value_cleaning(x):
         for li in group_answer:
@@ -112,7 +145,6 @@ def consolidation(table_path, answer):
 
     # output csv
     df.to_csv(table_path, index=False)
-
     print(json.dumps({"successfuly": 1}))
 
 # get the training pair question candidate set.
@@ -139,7 +171,6 @@ if __name__ == '__main__':
     # slide_window(table_path)
     # table_path = path + '/training_question_from_predict.csv'
     # ques_training(table_path)
-
 
     if sys.argv[1] == 'slide_window':
         slide_window(sys.argv[2])
