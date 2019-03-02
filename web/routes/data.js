@@ -130,7 +130,8 @@ async function req_slide_window(tableID) {
         let argv = [];
         argv.push(cPath);
         argv.push('slide_window'); // for tag
-        argv.push(process.cwd() + '/dataset/DBConf/' + 'expr_tmp/' + 'gold_from_predict' + '.csv');
+        argv.push(process.cwd() + '/dataset/DBConf/' + 'expr_tmp');
+        argv.push('/gold_from_predict.csv');
         console.log(argv);
         const ls = spawn('python', argv);
         let result = '';

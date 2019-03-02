@@ -109,11 +109,8 @@ function request_visualization(isInit) {
         dataType: 'json',
         success: function (data) {
             //TODO 如果是首次调用
-            if (isInit == true){
-                setTimeout(function () {
-                    slide_window(tableName)
-                },500);
-            }
+            slide_window(tableName);
+
 
             //data = data['Citations'];
             //console.log(data);

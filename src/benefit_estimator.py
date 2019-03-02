@@ -41,7 +41,7 @@ def wrongVisDetector(current_vis, cleaned_vis):
     Note that: we can normalize the current_vis & cleaned_vis to [0,1]
                 the threshold is setting from experience
     '''
-    pre_define_threshold = 0.15 # an empirical value
+    pre_define_threshold = 0.015 # an empirical value
 
     if EMD(current_vis, cleaned_vis) > pre_define_threshold:
         return True
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     nor_cleaned_vis = cleaned_vis / np.sum(cleaned_vis)
     print(len(nor_cleaned_vis))
     print(len(nor_current_vis))
-    '''sort the array and fix the empty value.'''
+    '''fill the empty value.'''
     if len(nor_cleaned_vis) > len(nor_current_vis):
         nor_current_vis = np.append(np.zeros(len(nor_cleaned_vis) - len(nor_current_vis)), nor_current_vis)
     else:

@@ -14,21 +14,27 @@ def visQuery(TablePath, GroupByCol, AggCol, AggFuc):
     '''
     df = pd.read_csv(TablePath)
     data = {"x_data": [], "y_data": []}
-    data["x_data"] = df.groupby('Venue').sum()[['Citations']].index.T.tolist()
-    data["y_data"] = df.groupby('Venue').sum()[['Citations']].values.T.tolist()[0]
-    # data["x_data"] = df.groupby('Venue').sum()[['Citations']].reset_index().sort_values('Citations',
-    #                                                                                     ascending=False).values.T.tolist()[
-    #     0]
-    # data["y_data"] = df.groupby('Venue').sum()[['Citations']].reset_index().sort_values('Citations',
-    #                                                                                     ascending=False).values.T.tolist()[
-    #     1]
+    # data["x_data"] = df.groupby('Venue').sum()[['Citations']].index.T.tolist()
+    # data["y_data"] = df.groupby('Venue').sum()[['Citations']].values.T.tolist()[0]
+    data["x_data"] = df.groupby('Venue').sum()[['Citations']].reset_index().sort_values('Citations',
+                                                                                        ascending=False).values.T.tolist()[
+        0]
+    data["y_data"] = df.groupby('Venue').sum()[['Citations']].reset_index().sort_values('Citations',
+                                                                                        ascending=False).values.T.tolist()[
+        1]
     #print(len(data["x_data"]))
 
     '''
     Write data["y_data"] to the txt file as the visualization, which for compute the dist later.
+    current_vis ==interaction==> cleaned_vis
     '''
-    save_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'../dataset/DBConf/expr_tmp/vis'))
-    np.savetxt(save_path + "/current_vis.txt", np.sort(data["y_data"], axis=None))
+    vis_path = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), '../dataset/DBConf/expr_tmp/vis'))
+    # copy current_vis.txt to cleaned_vis.txt
+    current_vis = np.loadtxt(vis_path + "/current_vis.txt")
+    np.savetxt(vis_path + "/cleaned_vis.txt", np.sort(current_vis, axis = None))
+    # save new possible visualization as the current_vis.txt
+    np.savetxt(vis_path + "/current_vis.txt", np.sort(data["y_data"], axis = None))
 
     print(json.dumps(data))
 

@@ -473,7 +473,14 @@ $("#ques_slide_window").click(function () {
             name: 'SUM(Citations)',
             type: 'bar',
             data: value_Data,
-        }]
+            animationDelay: function (idx) {
+                return idx * 50;
+            }
+        }],
+        animationEasing: 'bounceln',
+        animationDelayUpdate: function (idx) {
+            return idx * 50;
+        }
     };
 
     // TODO manually refine. (the user delete a bar from the window)
@@ -585,5 +592,5 @@ $("#btn_approve_window").click(function () {
 });
 
 $("#btn_reject_window").click(function () {
-   alert("The user reject the window.")
+   alert()
 });

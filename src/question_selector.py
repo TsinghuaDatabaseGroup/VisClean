@@ -1,14 +1,54 @@
 import pandas as pd
 import sys
 import json
+import ast
+from pprint import pprint
+from sliding_window import SlidingWindow
 
 def jaccard_similarity(list1, list2):
     s1 = set(list1)
     s2 = set(list2)
     return len(s1.intersection(s2)) / len(s1.union(s2))
 
+def slide_window(path, table_name):
+    myWindow = SlidingWindow(path, table_name, x_axis_name="Venue", y_axis_name="Citations")
+    df, cand_xData, cand_yData = myWindow.get_data()
+
+    # read and get the question_status from the file.
+    with open(path + '/question_status.json') as f:
+        question_status = json.load(f)
+
+    # 第一次对这个数据集进行 compute string similarity
+    if question_status['Window']['IsFirstSimMatching'] == True:
+        # print('True')
+        # !!! 只有在第一次计算similarity的时候执行这个函数
+        top_groups = myWindow.compute_string_similarity(cand_xData, cand_yData)
+        cand_string = myWindow.auto_cleaning_string(df, top_groups)
+
+        # pprint(cand_string[:15])
+        # compute and return the window
+        window = myWindow.compute_window(cand_string, cand_xData, cand_yData)
+        print(json.dumps(window))
+
+        # save the temp string file
+        # myWindow.write_string_sim_set(cand_string)
+        # update the question_status in the JSON file.
+        # question_status['Window']['IsFirstSimMatching'] = False
+        # with open(path + '/question_status.json', 'w') as f:
+        #     json.dump(question_status, f)
+
+    # 不是第一次；即可以从上次缓存的数据文件中读取。
+    else:
+        # read and get the string similarity set from the temp file
+        cand_string = myWindow.read_string_sim_set('/string_similarity_set.txt')
+        # convert the string-list into the nested list
+        cand_string = ast.literal_eval(cand_string)
+        # compute and return the window
+        window = myWindow.compute_window(cand_string, cand_xData, cand_yData)
+        print(json.dumps(window))
+
 # 选择滑动窗口
-def slide_window(table_path):
+def slide_window_old(path, table_name):
     '''
     :param table_path: D'的路径，其中D'是指每轮迭代更新之后的数据集
     :return: 返回滑动窗口的数据，这里把所有数据都返回，前端的slide window直接取其前十个即可
@@ -18,7 +58,7 @@ def slide_window(table_path):
     【假设】
     这里在用一个启发式规则，因为dirty data的long tail效应，我们most benefit bars往往是在top-50 candidate bars中产生的
     '''
-    df = pd.read_csv(table_path)
+    df = pd.read_csv(path + table_name)
     data = {"x_data": [], "y_data": []}
     data["x_data"] = \
         df.groupby('Venue').sum()[['Citations']].reset_index().sort_values('Citations',
@@ -133,10 +173,9 @@ def consolidation(table_path, answer):
         return x
 
     # answer = sigmod+sigmod Conf,Vldb+VLDB,Tkde+IEEE TKDE
+    # Update the cleaning dataset from the user answer.
     answer = answer.split(',')
-
     group_answer = []
-
     for each in answer:
         group_answer.append(each.split('+'))
 
@@ -144,9 +183,11 @@ def consolidation(table_path, answer):
     df = pd.read_csv(table_path)
     df['Venue'] = df['Venue'].map(value_cleaning)
 
-    # update and output the new csv
+    # update and output the nvew csv
     df.to_csv(table_path, index=False)
     print(json.dumps({"successfuly": 1}))
+
+    # TODO read the question_status, and check if necessary to update the string_similarity_set.JSON
 
 # get the training pair question candidate set.
 def ques_training(table_path):
@@ -174,7 +215,7 @@ if __name__ == '__main__':
     # ques_training(table_path)
 
     if sys.argv[1] == 'slide_window':
-        slide_window(sys.argv[2])
+        slide_window(sys.argv[2], sys.argv[3])
 
     # if sys.argv[1] == 'ans_slide_window':
     #     ans_slide_window(sys.argv[2])
