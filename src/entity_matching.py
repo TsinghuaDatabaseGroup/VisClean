@@ -1,5 +1,6 @@
 #coding:utf-8
 import sys
+# TODO set the path
 sys.path.append('/Users/yuyu/Project/[VLDB19]VaClean')
 import random
 import py_entitymatching as em
@@ -50,6 +51,7 @@ class EntityMatching(object):
         :return: return the blocking set of A & B (dateaframe)
         '''
         pass
+
     def update_feature(self):
         '''
         :return: update the feature of candidate set by id

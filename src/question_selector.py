@@ -2,6 +2,7 @@ import pandas as pd
 import sys
 import json
 import ast
+import os
 from pprint import pprint
 from sliding_window import SlidingWindow
 
@@ -191,8 +192,27 @@ def consolidation(table_path, answer):
 
 # get the training pair question candidate set.
 def ques_training(table_path):
-    df = pd.read_csv(table_path)
-    print(df.loc[0].to_json())
+    # read and get the question_status and the pair index from the file.
+    path = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), '../dataset/DBConf/expr_tmp/'))
+    with open(path + '/question_status.json') as f:
+        question_status = json.load(f)
+
+    if question_status["Training"]["IsFirstTraining"] == True:
+        # TODO 如果是第一次训练模型，那么得标注数据，初始化EM模型
+        pass
+    else:
+        # TDOO 如果已经有一次训练好的模型，那么可以从EM模型预测的结果中，挑选Prob为0.6的给用户去标注。
+        # Read training pair based on the pair index.
+        pair_index = question_status["Training"]["PairIndex"]
+        df = pd.read_csv(table_path)
+        print(df.loc[pair_index].to_json())
+        # TODO modify the JSON style according to the requirement of front-end table
+
+        # update the question_status in the JSON file.
+        question_status['Training']['PairIndex'] = pair_index+10
+        with open(path + '/question_status.json', 'w') as f:
+            json.dump(question_status, f)
 
 # resort the bar of each bar chart.
 def resort(table_path):

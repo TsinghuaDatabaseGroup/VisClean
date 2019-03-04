@@ -5,7 +5,7 @@
 slide_window_data = {};
 var selectedBars = [];
 var user_approve_groups = [];
-var table_labelTrainingPair = $('#table_labelTrainingPair');
+var $table_labelTrainingPair = $('#table_labelTrainingPair');
 
 
 function training_question(tableName) {
@@ -20,7 +20,52 @@ function training_question(tableName) {
             // success and do something here
             $("#ques_alert").show();
             $("#ques_training").show();
+
+
+            // parse the training pairs into the table
             console.log(data);
+            let columns = [
+                {
+                    field: 'id',
+                    title: 'id'
+                },
+                {
+                    field: 'Title',
+                    title: 'Title'
+                },
+                {
+                    field: 'Authors',
+                    title: 'Authors'
+                },
+                {
+                    field: 'Venue',
+                    title: 'Venue'
+                },
+                {
+                    field: 'Year',
+                    title: 'Year'
+                }
+            ];
+            let table_data = [];
+            table_data.push({
+                id: data['ltable_id'],
+                Title: data['ltable_Title'],
+                Authors: data['ltable_Authors'],
+                Venue: data['ltable_Venue'],
+                Year: data['ltable_Year']
+            });
+            table_data.push({
+                id: data['rtable_id'],
+                Title: data['rtable_Title'],
+                Authors: data['rtable_Authors'],
+                Venue: data['rtable_Venue'],
+                Year: data['rtable_Year']
+            });
+
+            $table_labelTrainingPair.bootstrapTable('destroy').bootstrapTable({
+                columns: columns,
+                data: table_data
+            })
 
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -43,8 +88,10 @@ $(".answer_question").click(function () {
 
     //TODO Question selection
     if (Math.random() > 0.6){
+        console.log("Get Training Question");
         training_question()
     }else {
+        console.log("Get Window Question");
         slide_window()
     }
 });
@@ -256,8 +303,10 @@ function ans_slide_window(tableName, answer) {
 
             //TODO Question selection
             if (Math.random() > 0.6){
+                console.log("Get Training Question");
                 training_question()
             }else {
+                console.log("Get Window Question");
                 slide_window()
             }
         },
@@ -585,12 +634,12 @@ $("#btn_approve_window").click(function () {
     console.log("user_approve_groups = ", user_approve_groups);
 
     // sent the interaction result to the backend.
-    ans_slide_window('', user_approve_groups)
+    ans_slide_window('', user_approve_groups);
 
     // 销毁window-based chart对象实例
     myChart.dispose();
 });
 
 $("#btn_reject_window").click(function () {
-   alert()
+   alert('In developing!')
 });

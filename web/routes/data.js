@@ -101,7 +101,7 @@ async function req_ques_training(tableId){
         let argv = [];
         argv.push(cPath);
         argv.push('ques_training'); // for tag
-        argv.push(process.cwd() + '/dataset/DBConf/' + 'training_question_from_predict' + '.csv');
+        argv.push(process.cwd() + '/dataset/DBConf/expr_tmp/training_question_from_predict.csv');
         console.log(argv);
         const ls = spawn('python', argv);
         let result = '';
