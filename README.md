@@ -8,12 +8,8 @@
 </p>
 
 
-# VisClean v0.1  
-VisClean is a web-based system that progressively turns wrong visualizations into correct ones by interactive data cleaning. 
-It supports: (1) Wrong Visualization Detection: Given a dataset and a visualization, VisClean can automatically identify wrong visualizations caused by dirty data. 
-(2) Active Interaction: VisClean provides a novel sliding-window-based method for users to directly manipulate the visualization (e.g., merging two bars) for cleaning the data. 
-(3) Passive Interaction: VisClean also selects the most beneficial and visualization-aware cleaning questions to ask the user.
-
+# VisClean v0.1
+Data visualization is crucial in data-driven decision making. However, bad visualizations generated from dirty data often mislead the users to understand the data and draw wrong decisions. We propose VisClean, a system that progressively turns bad visualizations into good ones by interactive cleaning. The attendees will experience two main features: (1) Active Interaction: VisClean provides a novel window-based method that allows users to directly manipulate the visualizations (for bar/pie charts) to clean the data. (2) Passive Interaction: VisClean selects the most beneﬁcial and visualization-aware cleaning questions to the user and then reﬁnes the visualization (for bar/pie/line charts).
 
 ## Preview
 ![front-end-min](front-end-min.png)
@@ -62,7 +58,7 @@ The VisClean could be visited at [http://localhost:8080](http://localhost:8080)
 |#|Contributor|Affiliation|Contact|
 |---|----|-----|-----|
 |1|[Yuyu Luo](http://thanksyy.cn)| M.S. Student, Tsinghua University| luoyy18@mails.tsinghua.edu.cn
-|2|[Chengliang Chai](http://dbgroup.cs.tsinghua.edu.cn/chaicl/)| PhD Student, Tsinghua University| chaicl15@mails.tsinhua.edu.cn
+|2|[Chengliang Chai](http://dbgroup.cs.tsinghua.edu.cn/chaicl/)| PhD Candidate, Tsinghua University| chaicl15@mails.tsinhua.edu.cn
 |3|[Guoliang Li](http://dbgroup.cs.tsinghua.edu.cn/ligl/)|Professor, Tsinghua University| LastName+FirstName@tsinghua.edu.cn
 |4|[Nan Tang](http://da.qcri.org/ntang/index.html)|Senior Scientist, Qatar Computing Research Institute|ntang@hbku.edu.qa
 |5|Xuedi Qin| PhD Student, Tsinghua University| qxd17@mails.tsinghua.edu.cn
