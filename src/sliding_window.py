@@ -188,6 +188,39 @@ class SlidingWindow(object):
 
         return window
 
+    # 在这个version，ans_slide_window主要是做data consolidation的工作。
+    # Apply the answer from users
+    # 根据用户在window里面的interaction来进行数据集的更新  // 直接更新gold_from_predict.csv
+    def consolidation(self, answer):
+        '''
+        直接更新 [gold_from_predict.csv]
+        :param table_path: path for 'gold_from_predict.csv'
+        :param answer: the user answer (e.g., 'sigmod+sigmod Conf,Vldb+VLDB,Tkde+IEEE TKDE')
+        :return: return successful or failed
+        '''
+
+        def value_cleaning(x):
+            for li in group_answer:
+                if x in li[1:]:
+                    return li[0]
+            return x
+
+        # answer = sigmod+sigmod Conf,Vldb+VLDB,Tkde+IEEE TKDE
+        # Update the cleaning dataset from the user answer.
+        answer = answer.split(',')
+        group_answer = []
+        for each in answer:
+            group_answer.append(each.split('+'))
+
+        # read the processing cleaning dataset -- gold_from_predict.csv here.
+        df = pd.read_csv(self.path+self.table_name)
+        df[self.x_axis_name] = df[self.x_axis_name].map(value_cleaning)
+        # update and output the new csv
+        df.to_csv(self.path+self.table_name, index=False)
+        # TODO read the question_status, and check if necessary to update the string_similarity_set.JSON
+
+
+
 # Test the class here
 if __name__ == "__main__":
     path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp'

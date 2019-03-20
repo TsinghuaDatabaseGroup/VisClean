@@ -68,14 +68,14 @@ block content
                         p Data:
                             button.btn.btn-lg.btn-link(id="dataBtn")
                                 span.label.label-primary#selectedTableName
-                                    | DBPublications-input_id
+                                    | DB Papers
                         button.btn.btn-default.btn-block(type='button', id="uploadBtn" aria-label='Left Align')
                             span.glyphicon.glyphicon.glyphicon-upload
                             |   Select Dataset
                         //TODO 每变化一次数据表就自动画图
                         br
                         p #Rows:&nbsp
-                          span#rows 46323
+                          span#rows 46324
                         p #Columns:&nbsp
                           span#ColumnsCnt 6
                         |Columns:
@@ -123,17 +123,17 @@ block content
                                         option SUM
                                 td
                                     select.from.form-control
-                                        option -- --
+                                        option DESC
                                 td
                                     select.from.form-control
                                         option -- --
                                 td
                                     select.from.form-control
-                                        option -- --
+                                        option 10
                     p
                         b  Visualization Language:
                         code
-                            |   Visualize Bar, SELECT Venue, SUM(Citations) From DBPublications-input_id GROUP BY(Venue).
+                            |   Visualize Bar, SELECT Venue, SUM(Citations) From `DB Papers` GROUP BY(Venue) SORT Citations BY DESC LIMIT 10.
             .panel.panel-default
                 .panel-heading
                     strong
@@ -280,10 +280,7 @@ block content
                             strong
                                 | Interaction Panel
                         .panel-body
-                            #chart4window(style='width: 400px;height:450px')
-
-                            br
-                            br
+                            #chart4window(style='width: 400px;height:400px')
 
                             table.table.table-bordered#window_table(style='display:none')
                                 // Table head

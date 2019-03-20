@@ -492,9 +492,14 @@ $("#ques_slide_window").click(function () {
         //     data: legendData,
         // },
         xAxis: {
+            type: 'value',
+        },
+        yAxis: {
             type: 'category',
+            zlevel: 9999,
             axisLabel: {
-                rotate: 270,
+                inside: true,
+                rotate: 0,
                 interval: 0, //强制显示所有柱子的名字
                 formatter: function (value) {
                     let arr = value.toString().split(' ');
@@ -514,9 +519,7 @@ $("#ques_slide_window").click(function () {
                 }
             },
             data: category_Data
-        },
-        yAxis: {
-            type: 'value',
+
         },
         series: [{
             name: 'SUM(Citations)',
@@ -547,8 +550,8 @@ $("#ques_slide_window").click(function () {
                 {
                     name: 'Delete',
                     value: 'X',
-                    xAxis: params.dataIndex,
-                    yAxis: params.value
+                    xAxis: params.value,  // 标记出现的横纵坐标
+                    yAxis: params.dataIndex
                 }
             ]
         };
@@ -561,7 +564,7 @@ $("#ques_slide_window").click(function () {
         console.log("delete");
         option.series[0]['markPoint'] = {};
         myChart.setOption(option);
-        // set the deleteBarIndex
+        // set the deleteBarInde
         deleteBarIndex = undefined;
     });
     // the user click and then remove the bar.
@@ -570,7 +573,7 @@ $("#ques_slide_window").click(function () {
         // the user click the bar that he want to remove.
         console.log('mouse click-->para.dataIndex = ', params.dataIndex);
         if (deleteBarIndex != undefined){
-            option.xAxis.data.splice(deleteBarIndex ,1);
+            option.yAxis.data.splice(deleteBarIndex ,1);
             option.series[0].data.splice(deleteBarIndex ,1);
             // console.log(option.xAxis.data);
             // console.log(option.series[0].data);
@@ -630,7 +633,7 @@ $("#btn_approve_window").click(function () {
     $("#sent_wait_backend").show();
     $("#window_table").hide();
 
-    user_approve_groups = myChart.getOption().xAxis[0].data;
+    user_approve_groups = myChart.getOption().yAxis[0].data;
     console.log("user_approve_groups = ", user_approve_groups);
 
     // sent the interaction result to the backend.

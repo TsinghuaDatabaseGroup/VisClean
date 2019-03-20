@@ -41,7 +41,7 @@ def wrongVisDetector(current_vis, cleaned_vis):
     Note that: we can normalize the current_vis & cleaned_vis to [0,1]
                 the threshold is setting from experience
     '''
-    pre_define_threshold = 0.015 # an empirical value
+    pre_define_threshold = 0.006 # an empirical value
 
     if EMD(current_vis, cleaned_vis) > pre_define_threshold:
         return True
@@ -67,3 +67,31 @@ if __name__ == '__main__':
 
     # for test the EMD
     print(EMD(np.array(nor_current_vis), np.array(nor_cleaned_vis)))
+
+
+    # Test for EMD
+    # dirty = [181374, 132937, 76897, 75532, 69253, 58021, 53129, 47906, 47589, 37597]
+    # q_5 = [193994,183594, 155851,111884,70712,40215,36857,45458,29282,26124]
+    # q_10 = [371899,258783,227188,150085,85671,76387,71720,45073,32455,18929]
+    # q_15 = [353946,300745,190920,177925,126299,102393,51458,42877,38241,29265]
+    # g_t = [333946,290745,130920,117925,96299,70204,45458,43877,36241,27265]
+    #
+    # dirty = dirty / np.sum(dirty)
+    # q_5 = q_5 / np.sum(q_5)
+    # q_10 = q_10 / np.sum(q_10)
+    # q_15 = q_15 / np.sum(q_15)
+    # g_t = g_t / np.sum(g_t)
+    #
+    # print(EMD(dirty,g_t))
+    # print(EMD(q_5, g_t))
+    # print(EMD(q_10, g_t))
+    # print(EMD(q_15, g_t))
+    #
+    # print()
+    #
+    # print(EMD(dirty, q_5))
+    # print(EMD(q_5, q_10))
+    # print(EMD(q_10, q_15))
+    # print(EMD(q_15, g_t))
+
+

@@ -5,6 +5,7 @@ import ast
 import os
 from pprint import pprint
 from sliding_window import SlidingWindow
+from entity_matching import EntityMatching
 
 def jaccard_similarity(list1, list2):
     s1 = set(list1)
@@ -163,32 +164,6 @@ def slide_window_old(path, table_name):
     print(json.dumps(data))
 
 
-# 在这个version，ans_slide_window主要是做data consolidation的工作。
-# Apply the answer from users
-# 根据用户在window里面的interaction来进行数据集的更新  // 直接更新gold_from_predict.csv
-def consolidation(table_path, answer):
-    def value_cleaning(x):
-        for li in group_answer:
-            if x in li[1:]:
-                return li[0]
-        return x
-
-    # answer = sigmod+sigmod Conf,Vldb+VLDB,Tkde+IEEE TKDE
-    # Update the cleaning dataset from the user answer.
-    answer = answer.split(',')
-    group_answer = []
-    for each in answer:
-        group_answer.append(each.split('+'))
-
-    # read the processing cleaning dataset -- gold_from_predict.csv here.
-    df = pd.read_csv(table_path)
-    df['Venue'] = df['Venue'].map(value_cleaning)
-
-    # update and output the nvew csv
-    df.to_csv(table_path, index=False)
-    print(json.dumps({"successfuly": 1}))
-
-    # TODO read the question_status, and check if necessary to update the string_similarity_set.JSON
 
 # get the training pair question candidate set.
 def ques_training(table_path):
@@ -210,7 +185,7 @@ def ques_training(table_path):
         # TODO modify the JSON style according to the requirement of front-end table
 
         # update the question_status in the JSON file.
-        question_status['Training']['PairIndex'] = pair_index+10
+        question_status['Training']['PairIndex'] = pair_index+100
         with open(path + '/question_status.json', 'w') as f:
             json.dump(question_status, f)
 
@@ -228,23 +203,60 @@ def resort(table_path):
     print(json.dumps(data))
 
 if __name__ == '__main__':
-    # path = '/Users/yuyu/Project/VisClean/dataset/DBConf'
-    # table_path = path + '/gold_from_predict.csv'
-    # slide_window(table_path)
-    # table_path = path + '/training_question_from_predict.csv'
-    # ques_training(table_path)
+    path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp'
+    ltable_path = path + '/DBPublications-input_id.csv'
+    rtable_path = path + '/DBPublications-input_id.csv'
+    output_path = path
+    key_attr = 'Title'
+    l_output_attrs = r_output_attrs = ['Title', 'Authors', 'Venue', 'Year']
+    attrs_from_table = []
+    for var in l_output_attrs:
+        attrs_from_table.append('ltable_' + var)
+    for var in r_output_attrs:
+        attrs_from_table.append('rtable_' + var)
+
 
     if sys.argv[1] == 'slide_window':
         slide_window(sys.argv[2], sys.argv[3])
 
-    # if sys.argv[1] == 'ans_slide_window':
-    #     ans_slide_window(sys.argv[2])
-
     if sys.argv[1] == 'ans_slide_window':
-        consolidation(sys.argv[2], sys.argv[3])
+        # Phase 1: Update directly in window-based pipeline
+        # TODO [ok] call consolidation 直接更新gold_from_predict.csv
+        myWindow = SlidingWindow(sys.argv[2], sys.argv[3],
+                                 x_axis_name="Venue", y_axis_name="Citations")
+        myWindow.consolidation(sys.argv[4])
+
+        # Phase 2: update in the EM pipline
+        # TODO [] 修改Candidate_feature.csv and entire dataset A,B
+        answer = sys.argv[4].split(',')
+        group_answer = []
+        for each in answer:
+            group_answer.append(each.split('+'))
+
+        myEm = EntityMatching(ltable_path, rtable_path, output_path, key_attr,
+                              l_output_attrs, r_output_attrs, attrs_from_table)
+        myEm.update_CandFeature_AB('/candidate_feature.csv', 'Venue', group_answer)
+
+        print(json.dumps({"successfuly": 1}))
+        # TODO 修改label.csv
+
+        # TODO Retrain the EM model
+
+    # if sys.argv[1] == 'update_candidate_feature_AB':
+
+
+
+
+
 
     if sys.argv[1] == 'ques_training':
+        # TODO 根据pair的cluster信息，对齐一些non-standardization values (e.g., )
+
+        # TODO update the label.csv dataset
+
+        # TODO Retrain the EM model
         ques_training(sys.argv[2])
+
 
     if sys.argv[1] == 'req_resort':
         resort(sys.argv[2])

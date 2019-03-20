@@ -2,7 +2,7 @@ import pandas as pd
 from collections import Counter
 import csv
 
-path = '/Users/yuyu/Project/VisClean/dataset/DBConf'
+path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp/'
 ltable_path = path + '/DBPublications-input_id.csv'
 rtable_path = path + '/DBPublications-input_id.csv'
 rf_predict_path = path + '/rf_predict.csv'
@@ -30,38 +30,38 @@ def myPair2Cluster():
         if cnt % 500 == 0:
             print('processing:', cnt / len(df), '%')
 
-        # if (row['ltable_id'] != row['rtable_id']) and row['predicted_probs'] > 0.6:
-        #     '''for test'''
-        #     # mergeId.append((row['ltable_id'], row['rtable_id']))
-        #     # print((row['ltable_id'], row['rtable_id']))
-        #     if cnt == 0:
-        #         apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] = PredictClusterId
-        #         apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] = PredictClusterId
-        #         cnt += 1
-        #         # PredictClusterId += 1
-        #     else:
-        #         if apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] == None \
-        #                 and apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] != None:
-        #             apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] = PredictClusterId
-        #             cnt += 1
-        #
-        #         if apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] != None \
-        #                 and apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] == None:
-        #             apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] = PredictClusterId
-        #             cnt += 1
-        #
-        #         # New
-        #         if apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] == None \
-        #                 and apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] == None:
-        #             # print((row['ltable_id'], row['rtable_id'], row['predicted_probs']))
-        #             PredictClusterId += 1
-        #             apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] = PredictClusterId
-        #             apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] = PredictClusterId
-        #             cnt += 1
+        if (row['ltable_id'] != row['rtable_id']) and row['predicted_probs'] > 0.6:
+            '''for test'''
+            # mergeId.append((row['ltable_id'], row['rtable_id']))
+            # print((row['ltable_id'], row['rtable_id']))
+            if cnt == 0:
+                apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] = PredictClusterId
+                apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] = PredictClusterId
+                cnt += 1
+                # PredictClusterId += 1
+            else:
+                if apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] == None \
+                        and apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] != None:
+                    apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] = PredictClusterId
+                    cnt += 1
 
-        if (row['ltable_id'] != row['rtable_id']) and (row['predicted_probs'] <= 0.6 and row['predicted_probs'] >= 0.4):
-            cnt += 1
-            quesId.append(row.tolist())
+                if apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] != None \
+                        and apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] == None:
+                    apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] = PredictClusterId
+                    cnt += 1
+
+                # New
+                if apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] == None \
+                        and apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] == None:
+                    # print((row['ltable_id'], row['rtable_id'], row['predicted_probs']))
+                    PredictClusterId += 1
+                    apply_table.loc[row['ltable_id'] - 1, 'predictClusterId'] = PredictClusterId
+                    apply_table.loc[row['rtable_id'] - 1, 'predictClusterId'] = PredictClusterId
+                    cnt += 1
+
+        # if (row['ltable_id'] != row['rtable_id']) and (row['predicted_probs'] <= 0.6 and row['predicted_probs'] >= 0.4):
+        #     cnt += 1
+        #     quesId.append(row.tolist())
             # print(quesId)
 
     # print(mergeId)
@@ -69,10 +69,10 @@ def myPair2Cluster():
     print(apply_table.head(n=200))
     print(quesId)
 
-    with open('trainming_question_from_predict.csv', 'a+') as file:
-        csv.writer(file, lineterminator = '\n').writerows(quesId)
+    # with open('trainming_question_from_predict.csv', 'a+') as file:
+    #     csv.writer(file, lineterminator = '\n').writerows(quesId)
 
-    # apply_table.to_csv(path + '/cluster_from_predict.csv', index=False)
+    apply_table.to_csv(path + '/cluster_from_predict.csv', index=False)
 
 def get_golden():
     '''
@@ -102,5 +102,5 @@ def get_golden():
 
 
 if __name__ == '__main__':
-    # get_golden()
-    myPair2Cluster()
+    get_golden()
+    # myPair2Cluster()

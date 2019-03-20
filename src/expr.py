@@ -8,7 +8,7 @@ if __name__ == '__main__':
     :return: 返回EM预测的数据
     '''
     print("Set variable")
-    path = '/Users/yuyu/Project/VisClean/dataset/DBConf/expr_tmp'
+    path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp'
     ltable_path = path + '/DBPublications-input_id.csv'
     rtable_path = path + '/DBPublications-input_id.csv'
     output_path = path
@@ -23,6 +23,6 @@ if __name__ == '__main__':
     print("Left Table & Right Table Path = ", ltable_path)
     myEm = EntityMatching(ltable_path, rtable_path, output_path, key_attr,
                     l_output_attrs, r_output_attrs, attrs_from_table,
-                    is_blocking=True, is_save_candidate_feature = True, is_need_label = False)
+                    is_blocking=True, is_save_candidate_feature = False, is_need_label = False)
 
     myEm.entity_matching()

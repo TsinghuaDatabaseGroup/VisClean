@@ -5,7 +5,6 @@ var express = require('express');
 var router = express.Router();
 const spawn = require('child_process').spawn;
 
-
 router.get('/req_TableDataServerSidePaging', async function (req,res,next) {
     console.log('req_TableDataServerSidePaging receive the request');
 
@@ -160,7 +159,8 @@ async function ans_slide_window(tableID, answer) {
         let argv = [];
         argv.push(cPath);
         argv.push('ans_slide_window'); // for tag
-        argv.push(process.cwd() + '/dataset/DBConf/'+ 'expr_tmp/' + 'gold_from_predict' + '.csv');
+        argv.push(process.cwd() + '/dataset/DBConf/expr_tmp' );
+        argv.push('/gold_from_predict.csv');
 
         let answer_argv = "";
         // [begin] code block for dealing with several groups in the window
@@ -191,7 +191,8 @@ async function ans_slide_window(tableID, answer) {
         const ls = spawn('python', argv);
         let result = '';
         ls.stdout.on('data', (data) => {
-            result += data;
+            console.log(`stdout: ${data}`)
+            // result += data;
         });
 
         ls.stderr.on('data', (data) => {
@@ -203,8 +204,9 @@ async function ans_slide_window(tableID, answer) {
             resolve(result);
         });
     });
-    console.log(data);
-    return data;
+    // console.log(data);
+    console.log("Do something before return");
+    return {"successful": true};
 }
 
 async function req_VisQueryRes(tableID, GroupByCol, AggCol, AggFunc){
