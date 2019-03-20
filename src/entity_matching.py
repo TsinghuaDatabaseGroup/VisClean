@@ -50,6 +50,26 @@ class EntityMatching(object):
         '''
         pass
 
+    # For update the label data
+    def update_label(self, label_file, mode, x_axis_name, transformation = None):
+        '''
+        :param label_file: the name of label file.
+        :param mode: the update mode, if mode == 'Window', we do string transformation in the csv;
+                    if mode == "EM" do tuple-attr transformation.
+        :param x_axis_name: the name for x-axis.
+        :param transformation: the string transformation tuple.
+        :return: Just for data processing.
+        '''
+        if mode == "Window":
+            label = pd.read_csv(self.output_path + label_file)
+
+            label.loc[label['ltable_'+ x_axis_name].isin(transformation[0][1:]), 'ltable_'+ x_axis_name] = transformation[0][0]
+            label.loc[label['rtable_'+ x_axis_name].isin(transformation[0][1:]), 'ltable_'+ x_axis_name] = transformation[0][0]
+
+            label.to_csv(self.output_path+'/labeled.csv', index=False)
+        if mode == "EM":
+            pass
+
     def update_CandFeature_AB(self, Cand_feature_name, x_axis_name, transformation):
         '''
         :param Cand_feature_name: the file name of candidate feature of blocking candidate set.

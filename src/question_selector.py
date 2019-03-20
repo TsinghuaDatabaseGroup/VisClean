@@ -203,23 +203,28 @@ def resort(table_path):
     print(json.dumps(data))
 
 if __name__ == '__main__':
-    path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp'
-    ltable_path = path + '/DBPublications-input_id.csv'
-    rtable_path = path + '/DBPublications-input_id.csv'
-    output_path = path
-    key_attr = 'Title'
-    l_output_attrs = r_output_attrs = ['Title', 'Authors', 'Venue', 'Year']
-    attrs_from_table = []
-    for var in l_output_attrs:
-        attrs_from_table.append('ltable_' + var)
-    for var in r_output_attrs:
-        attrs_from_table.append('rtable_' + var)
-
 
     if sys.argv[1] == 'slide_window':
         slide_window(sys.argv[2], sys.argv[3])
 
     if sys.argv[1] == 'ans_slide_window':
+        # default setting
+        path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp'
+        ltable_path = path + '/DBPublications-input_id.csv'
+        rtable_path = path + '/DBPublications-input_id.csv'
+        output_path = path
+        key_attr = 'Title'
+        l_output_attrs = r_output_attrs = ['Title', 'Authors', 'Venue', 'Year']
+        attrs_from_table = []
+        for var in l_output_attrs:
+            attrs_from_table.append('ltable_' + var)
+        for var in r_output_attrs:
+            attrs_from_table.append('rtable_' + var)
+
+        myEm = EntityMatching(ltable_path, rtable_path, output_path, key_attr,
+                              l_output_attrs, r_output_attrs, attrs_from_table,
+                              is_blocking=True, is_save_candidate_feature = True, is_need_label = False)
+
         # Phase 1: Update directly in window-based pipeline
         # TODO [ok] call consolidation 直接更新gold_from_predict.csv
         myWindow = SlidingWindow(sys.argv[2], sys.argv[3],
@@ -233,15 +238,15 @@ if __name__ == '__main__':
         for each in answer:
             group_answer.append(each.split('+'))
 
-        myEm = EntityMatching(ltable_path, rtable_path, output_path, key_attr,
-                              l_output_attrs, r_output_attrs, attrs_from_table)
+
         myEm.update_CandFeature_AB('/candidate_feature.csv', 'Venue', group_answer)
 
         print(json.dumps({"successfuly": 1}))
         # TODO 修改label.csv
+        myEm.update_label('/labeled.csv', mode='Window', x_axis_name='Venue', transformation=group_answer)
 
         # TODO Retrain the EM model
-
+        myEm.entity_matching()
     # if sys.argv[1] == 'update_candidate_feature_AB':
 
 
