@@ -1,6 +1,7 @@
 import pandas as pd
 from collections import Counter
 import csv
+import time
 
 path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp/'
 ltable_path = path + '/DBPublications-input_id.csv'
@@ -10,6 +11,7 @@ output_path = path
 apply_table_path = ltable_path
 
 def myPair2Cluster():
+    start_time = time.time()
     mergeId = []  # [(1,2),(1,4), ...]
     quesId = []
     df = pd.read_csv(rf_predict_path)
@@ -74,6 +76,8 @@ def myPair2Cluster():
 
     apply_table.to_csv(path + '/cluster_from_predict.csv', index=False)
 
+    print("The time for pair2cluster: ", time.time()-start_time)
+
 def get_golden():
     '''
     :return: Merge those pairs/ tuples with high predicted probability
@@ -102,5 +106,5 @@ def get_golden():
 
 
 if __name__ == '__main__':
-    get_golden()
-    # myPair2Cluster()
+    # get_golden()
+    myPair2Cluster()

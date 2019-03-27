@@ -1,4 +1,5 @@
 import pandas as pd
+import time
 
 class Node(object):
     def __init__(self, id="", node1=None, node2=None):
@@ -13,6 +14,10 @@ class Node(object):
         return self.ids
 
 class Pair2cluster(object):
+    '''
+    :param A_table: the entire dataset
+    :param apply_table: the predict dataset
+    '''
     def __init__(self, A_table, B_table, apply_table):
         self.A_table = A_table
         self.B_table = B_table
@@ -24,19 +29,19 @@ class Pair2cluster(object):
         # construct leaf node
         A_table_size = len(self.A_table)
         count = 0
-        for _, row in self.A_table.iterrows():
+        for row in self.A_table.itertuples():
             # if count % 100 == 0:
                 # print str(count)+'/'+str(A_table_size)
-            id = int(row['id'])
+            id = int(getattr(row,'id'))
             self.nodes.append(Node(id))
             self.ids_pointer[id] = len(self.nodes) - 1
             count += 1
         # construct higher level nodes
         apply_table_size = len(self.apply_table)
         count = 0
-        for _, row in self.apply_table.iterrows():
-            ltable_id = int(row['l_id'])
-            rtable_id = int(row['r_id'])
+        for row in self.apply_table.itertuples():
+            ltable_id = int(getattr(row,'ltable_id'))
+            rtable_id = int(getattr(row,'rtable_id'))
             left_node_id = self.ids_pointer[ltable_id]
             right_node_id = self.ids_pointer[rtable_id]
             if left_node_id != right_node_id:
@@ -47,17 +52,38 @@ class Pair2cluster(object):
                     self.ids_pointer[int(ii)] = len(self.nodes) - 1
             count += 1
         ids = []
-        cluster_id = []
+        cluster_id = {}
+        cluster_id_ordered = []
         print ("generate cluster_id")
         count = 0
-        for _, row in self.A_table.iterrows():
-            id = int(row['id'])
-            ids.append(row['id'])
-            cluster_id.append(self.ids_pointer[id])
+        for row in self.A_table.itertuples():
+            id = int(getattr(row, 'id'))
+            cluster_id[id] = self.ids_pointer[id]
             count += 1
-        cluster_table = pd.DataFrame(data={'id': ids, 'cluster_id': cluster_id})
-        print ( "join with origin table")
-        result = cluster_table.join(self.A_table.set_index('id'), how='inner', on='id', lsuffix='', rsuffix='_r')
-        if 'cluster_id_r' in result.columns:
-            result.drop('cluster_id_r', axis=1, inplace=True)
+        #print (self.A_table.dtypes)
+        print ("join with origin table")
+        result = self.A_table.copy()
+        length = len(result)
+        cnt = 0
+        for row in result.itertuples():
+#             if cnt % 1000 == 0:
+#                 print (cnt, '/', length)
+            cluster_id_ordered.append(cluster_id[int(row.id)])
+            cnt += 1
+        result['cluster_id'] = pd.Series(cluster_id_ordered).values
         return result
+
+if __name__ == '__main__':
+    path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp'
+    apply_table_path = path + '/rf_predict.csv'
+    A_table_path = path + '/DBPublications-input_id.csv'
+    A_table = B_table = pd.read_csv(A_table_path)
+    apply_table = pd.read_csv(apply_table_path)
+    # 过滤出 predicted = 1的tuple pair 认为（ > 0.6才是1）
+    apply_table = apply_table[apply_table['predicted_probs'] >= 0.6]
+
+    start_time = time.time()
+    myPair2Cluster = Pair2cluster(A_table, B_table, apply_table)
+    result = myPair2Cluster.constructCluster()
+    result.to_csv(path + '/cluster_from_predict.csv', index=False)
+    print("Time for getting cluster from matching pairs:", time.time() - start_time)

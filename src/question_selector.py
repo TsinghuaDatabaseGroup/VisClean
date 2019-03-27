@@ -3,9 +3,12 @@ import sys
 import json
 import ast
 import os
+import time
 from pprint import pprint
 from sliding_window import SlidingWindow
 from entity_matching import EntityMatching
+from pair2cluster import Pair2cluster
+from majority_vote import MajorityVoting
 
 def jaccard_similarity(list1, list2):
     s1 = set(list1)
@@ -166,7 +169,7 @@ def slide_window_old(path, table_name):
 
 
 # get the training pair question candidate set.
-def ques_training(table_path):
+def get_ques_training(table_path):
     # read and get the question_status and the pair index from the file.
     path = os.path.abspath(
         os.path.join(os.path.dirname(os.path.abspath(__file__)), '../dataset/DBConf/expr_tmp/'))
@@ -185,7 +188,7 @@ def ques_training(table_path):
         # TODO modify the JSON style according to the requirement of front-end table
 
         # update the question_status in the JSON file.
-        question_status['Training']['PairIndex'] = pair_index+100
+        question_status['Training']['PairIndex'] = pair_index + 100
         with open(path + '/question_status.json', 'w') as f:
             json.dump(question_status, f)
 
@@ -202,29 +205,52 @@ def resort(table_path):
     # print(len(data["x_data"]))
     print(json.dumps(data))
 
+def answer_ques_training(table_path, table_name, tuple1, tuple2, gold):
+    '''
+    :param table_path:
+    :param table_name:
+    :param tuple1:
+    :param tuple2:
+    :param gold:
+    :return:
+    '''
+    tuple1 = json.loads(tuple1)
+    tuple2 = json.loads(tuple2)
+    label = pd.read_csv(table_path)
+    new_row = {}
+    for key, value in tuple1.items():
+        new_row['ltable_' + key] = value
+    for key, value in tuple2.items():
+        new_row['rtable_' + key] = value
+    new_row['_id'] = label['_id'].max() + 1
+    new_row['gold'] = gold
+    label = label.append(new_row, ignore_index=True)
+    label.to_csv(table_path, index=False)
+    # print("new_row: ", new_row)
+
 if __name__ == '__main__':
+    # default setting
+    path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp'
+    ltable_path = path + '/DBPublications-input_id.csv'
+    rtable_path = path + '/DBPublications-input_id.csv'
+    output_path = path
+    key_attr = 'Title'
+    l_output_attrs = r_output_attrs = ['Title', 'Authors', 'Venue', 'Year']
+    attrs_from_table = []
+    for var in l_output_attrs:
+        attrs_from_table.append('ltable_' + var)
+    for var in r_output_attrs:
+        attrs_from_table.append('rtable_' + var)
+
+    myEm = EntityMatching(ltable_path, rtable_path, output_path, key_attr,
+                          l_output_attrs, r_output_attrs, attrs_from_table,
+                          is_blocking=True, is_save_candidate_feature=True, is_need_label=False)
 
     if sys.argv[1] == 'slide_window':
         slide_window(sys.argv[2], sys.argv[3])
 
     if sys.argv[1] == 'ans_slide_window':
-        # default setting
-        path = '/Users/yuyu/Documents/GitHub/VisClean/dataset/DBConf/expr_tmp'
-        ltable_path = path + '/DBPublications-input_id.csv'
-        rtable_path = path + '/DBPublications-input_id.csv'
-        output_path = path
-        key_attr = 'Title'
-        l_output_attrs = r_output_attrs = ['Title', 'Authors', 'Venue', 'Year']
-        attrs_from_table = []
-        for var in l_output_attrs:
-            attrs_from_table.append('ltable_' + var)
-        for var in r_output_attrs:
-            attrs_from_table.append('rtable_' + var)
-
-        myEm = EntityMatching(ltable_path, rtable_path, output_path, key_attr,
-                              l_output_attrs, r_output_attrs, attrs_from_table,
-                              is_blocking=True, is_save_candidate_feature = True, is_need_label = False)
-
+        pipeline_time_start = time.time()
         # Phase 1: Update directly in window-based pipeline
         # TODO [ok] call consolidation 直接更新gold_from_predict.csv
         myWindow = SlidingWindow(sys.argv[2], sys.argv[3],
@@ -232,35 +258,86 @@ if __name__ == '__main__':
         myWindow.consolidation(sys.argv[4])
 
         # Phase 2: update in the EM pipline
-        # TODO [] 修改Candidate_feature.csv and entire dataset A,B
+        # TODO [ok] 修改Candidate_feature.csv and entire dataset A,B
+        start_time = time.time()
         answer = sys.argv[4].split(',')
         group_answer = []
         for each in answer:
             group_answer.append(each.split('+'))
 
-
         myEm.update_CandFeature_AB('/candidate_feature.csv', 'Venue', group_answer)
+        print("Time for update candidate_feature, and entire dataset A,B:", time.time() - start_time)
 
         print(json.dumps({"successfuly": 1}))
-        # TODO 修改label.csv
+        # TODO [ok] 修改label.csv
+        start_time = time.time()
         myEm.update_label('/labeled.csv', mode='Window', x_axis_name='Venue', transformation=group_answer)
+        print("Time for update label dataset:", time.time() - start_time)
 
         # TODO Retrain the EM model
+        start_time = time.time()
         myEm.entity_matching()
-    # if sys.argv[1] == 'update_candidate_feature_AB':
+        print("Time for retrain EM model:", time.time() - start_time)
 
+        # TODO Get cluster from matching pair
+        ltable = rtable = pd.read_csv(ltable_path)
+        apply_table_path = path + '/rf_predict.csv'
+        apply_table = pd.read_csv(apply_table_path)
+        # 过滤出 predicted = 1的tuple pair 认为（ > 0.6才是1）
+        apply_table = apply_table[apply_table['predicted_probs'] >= 0.6]
+        start_time = time.time()
+        myPair2Cluster = Pair2cluster(ltable, rtable, apply_table)
+        result = myPair2Cluster.constructCluster()
+        result.to_csv(path + '/cluster_from_predict.csv', index=False)
+        print("Time for getting cluster from matching pairs:", time.time() - start_time)
 
+        start_time = time.time()
+        myMajorityVoting = MajorityVoting(output_path,
+                                          cluster_table_name = '/cluster_from_predict.csv',
+                                          output_table_name = '/gold_from_predict.csv',
+                                          y_axis_name = 'Citations',
+                                          cluster_id_tag = 'cluster_id')
+        myMajorityVoting.majority_voting()
+        print("Time for majority vote:", time.time() - start_time)
 
+        print("Time for processing the response window pipeline: ", time.time() - pipline_time_start)
 
+    if sys.argv[1] == 'get_ques_training':
+        # Get the training pair.
+        get_ques_training(sys.argv[2])
 
-
-    if sys.argv[1] == 'ques_training':
+    if sys.argv[1] == 'answer_ques_training':
+        pipeline_time_start = time.time()
+        # do something when the user approving the training question/
         # TODO 根据pair的cluster信息，对齐一些non-standardization values (e.g., )
+        # TODO [ok] update the label.csv dataset
+        answer_ques_training(table_path=sys.argv[2], table_name=sys.argv[3], tuple1=sys.argv[4], tuple2=sys.argv[5], gold = sys.argv[6])
+        # TODO [ok] Retrain the EM model
+        myEm.entity_matching()
+        # TODO [ok] Get cluster from matching pair
+        ltable = rtable = pd.read_csv(ltable_path)
+        apply_table_path = path + '/rf_predict.csv'
+        apply_table = pd.read_csv(apply_table_path)
+        # 过滤出 predicted = 1的tuple pair 认为（ > 0.6才是1）
+        apply_table = apply_table[apply_table['predicted_probs'] >= 0.6]
+        start_time = time.time()
+        myPair2Cluster = Pair2cluster(ltable, rtable, apply_table)
+        result = myPair2Cluster.constructCluster()
+        result.to_csv(path + '/cluster_from_predict.csv', index=False)
+        print("Time for getting cluster from matching pairs:", time.time() - start_time)
 
-        # TODO update the label.csv dataset
+        start_time = time.time()
+        myMajorityVoting = MajorityVoting(output_path,
+                                          cluster_table_name='/cluster_from_predict.csv',
+                                          output_table_name='/gold_from_predict.csv',
+                                          y_axis_name='Citations',
+                                          cluster_id_tag='cluster_id')
+        myMajorityVoting.majority_voting()
+        print("Time for majority vote:", time.time() - start_time)
 
-        # TODO Retrain the EM model
-        ques_training(sys.argv[2])
+        # TODO Do auto remove duplicate/ standardize values after retraining model.
+
+        print("Time for processing the response of EM question: ", time.time() - pipeline_time_start)
 
 
     if sys.argv[1] == 'req_resort':
